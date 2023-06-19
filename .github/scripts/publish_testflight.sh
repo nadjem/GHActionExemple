@@ -2,5 +2,5 @@
 
 set -eo pipefail
 
-xcrun altool --upload-app -t ios -f build/Calculator\ iOS.ipa -u "$APPLEID_USERNAME" -p "$APPLEID_PASSWORD" --verbose
+xcrun altool --upload-app -t ios -f build/GHActionExemple\ iOS.ipa -u "$APPLEID_USERNAME" -p "$APPLEID_PASSWORD" --verbose
 
