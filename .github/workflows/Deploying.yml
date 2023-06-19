@@ -1,29 +1,18 @@
-name: Deploying
+name: CICD Demo
 on:
-  workflow_dispatch
-  
+ push:
+  branches:
+   - main
+   - workflow_dispatch
+ pull_request:
+  branches:
+   - main
 jobs:
-  deploy:
-    name: Deploying to Testflight
-    runs-on: macOS-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v1
-      - name: Install gpg
-        run: brew install gnupg
-      - name: Setup provisioning profile
-        env:
-          IOS_KEYS: ${{ secrets.IOS_KEYS }}
-        run: ./.github/secrets/decrypt_secrets.sh
-      - name: Archiving project
-        env:
-          PR_NUMBER: $(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
-        run: ./.github/scripts/archive_app.sh
-      - name: Exporting .ipa
-        run: ./.github/scripts/export_ipa.sh
-      - name: Publishing app
-        if: success()
-        env:
-          APPLEID_USERNAME: ${{ secrets.APPLEID_USERNAME }}
-          APPLEID_PASSWORD: ${{ secrets.APPLEID_PASSWORD }}
-        run: ./.github/scripts/publish_testflight.sh
+ build-and-test:
+  runs-on: macos-latest
+  steps:
+  - uses: actions/checkout@v2
+  - name: Select Xcode
+    run: sudo Xcode-select -switch /Applications/Xcode_13.2.1.app
+  - name: Build & Test
+    run: xcodebuild clean build test -workspace ProjectName.xcworkspace -scheme SchemeName -destination 'platform=iOS Simulator,name=iPhone 12 Pro,OS=15.2'
