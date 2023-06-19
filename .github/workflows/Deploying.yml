@@ -8,13 +8,17 @@ on:
   branches:
    - main
 jobs:
- build-and-test:
-  runs-on: macos-latest
-  steps:
-  - uses: actions/checkout@v2
-  - name: Select Xcode
-    run: sudo Xcode-select -switch /Applications/Xcode_14.3.1.app
-  - name: list
-    run: ls && ls GHActionExemple.xcodeproj
-  - name: Build & Test
-    run: xcodebuild clean build test -workspace ./GHActionExemple.xcodeproj/project.xcworkspace -scheme GHActionExemple -destination 'platform=iOS Simulator,name=iPhone 14 Pro,OS=16.4'
+  build-and-test:
+    
+    runs-on: macos-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+        
+    - uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: latest-stable
+        
+    - name: Build and test
+      run: xcodebuild clean build test -project GHActionExemple.xcodeproj -scheme "GHActionExemple" CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO
